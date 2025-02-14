@@ -1,19 +1,9 @@
 # BsonUtility
+[![license](https://img.shields.io/github/license/Alex-Rachel/BsonUtility.svg)](https://github.com/Alex-Rachel/BsonUtility/blob/main/LICENSE) 
+[![last](https://img.shields.io/github/last-commit/Alex-Rachel/BsonUtility.svg)](https://github.com/Alex-Rachel/BsonUtility)
+[![issue](https://img.shields.io/github/issues/Alex-Rachel/BsonUtility.svg)](https://github.com/Alex-Rachel/BsonUtility/issues)
+[![topLanguage](https://img.shields.io/github/languages/top/Alex-Rachel/BsonUtility.svg)](https://github.com/Alex-Rachel/BsonUtility)
 
-<br>
-<a style="text-decoration:none">
-    <img src="https://img.shields.io/github/license/Alex-Rachel/BsonUtility" alt="license" />
-  </a>
-  <a style="text-decoration:none">
-    <img src="https://img.shields.io/github/last-commit/Alex-Rachel/BsonUtility" alt="last" />
-  </a>
-  <a style="text-decoration:none">
-    <img src="https://img.shields.io/github/issues/Alex-Rachel/BsonUtility" alt="issue" />
-  </a>
-  <a style="text-decoration:none">
-    <img src="https://img.shields.io/github/languages/top/Alex-Rachel/BsonUtility" alt="topLanguage" />
-  </a>
-  </br>
 
 BsonUtility for Unity
 
