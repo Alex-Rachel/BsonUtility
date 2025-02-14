@@ -8,18 +8,28 @@ using UnityEngine;
 namespace BsonUtility
 {
     /// <summary>
-    /// Bson Utility.
+    /// Bson 工具类，用于处理 BSON（Binary JSON）格式的数据。
     /// </summary>
     public sealed class Bson
     {
+        // 使用字节数组作为键的字典，用于缓存已经序列化过的对象
         private static readonly Dictionary<byte[], object> BsonObjects = new(ByteArrayComparer.Default);
 
+        // 存储类型的属性元数据的字典
         private static readonly IDictionary<Type, IList<PropertyMeta>> PropertyMetas = new Dictionary<Type, IList<PropertyMeta>>();
 
+        // 存储数组元数据的字典
         private static readonly IDictionary<Type, ArrayMeta> ArrayMetas = new Dictionary<Type, ArrayMeta>();
 
+        // 存储对象元数据的字典
         private static readonly IDictionary<Type, ObjectMeta> ObjectMetas = new Dictionary<Type, ObjectMeta>();
 
+        /// <summary>
+        /// 将对象序列化为 BSON 格式的字节数组。
+        /// </summary>
+        /// <param name="obj">要序列化的对象。</param>
+        /// <param name="cache">是否缓存序列化后的字节数组。</param>
+        /// <returns>BSON 格式的字节数组。</returns>
         public static byte[] ToBson(object obj, bool cache = false)
         {
             if (obj == null)
@@ -29,9 +39,20 @@ namespace BsonUtility
 
             using Writer writer = new Writer();
             writer.Encode(obj);
-            return writer.Bytes;
+            var bytes = writer.Bytes;
+            if (cache)
+            {
+                BsonObjects[bytes] = obj; // 如果需要缓存，则将序列化后的字节数组和对象存入字典
+            }
+
+            return bytes;
         }
 
+        /// <summary>
+        /// 将对象序列化为 BSON 格式，并写入到指定的 Writer 对象中。
+        /// </summary>
+        /// <param name="obj">要序列化的对象。</param>
+        /// <param name="writer">用于写入序列化数据的 Writer 对象。</param>
         public static void ToBson(object obj, Writer writer)
         {
             if (obj == null || writer == null)
@@ -42,6 +63,12 @@ namespace BsonUtility
             writer.Encode(obj);
         }
 
+        /// <summary>
+        /// 将 BSON 格式的字节数组反序列化为指定类型的对象。
+        /// </summary>
+        /// <typeparam name="T">要反序列化的对象类型。</typeparam>
+        /// <param name="bson">BSON 格式的字节数组。</param>
+        /// <returns>反序列化后的对象。</returns>
         public static T ToObject<T>(byte[] bson)
         {
             if (bson == null || bson.Length == 0)
@@ -49,6 +76,7 @@ namespace BsonUtility
                 return default;
             }
 
+            // 如果字节数组已经在缓存中，则直接返回缓存的对象
             if (BsonObjects.TryGetValue(bson, out var obj) && obj != null)
             {
                 return (T)obj;
@@ -58,11 +86,20 @@ namespace BsonUtility
             return (T)reader.Decode(typeof(T));
         }
 
+        /// <summary>
+        /// 使用指定的 Reader 对象将 BSON 数据反序列化为指定类型的对象。
+        /// </summary>
+        /// <typeparam name="T">要反序列化的对象类型。</typeparam>
+        /// <param name="reader">用于读取 BSON 数据的 Reader 对象。</param>
+        /// <returns>反序列化后的对象。</returns>
         public static T ToObject<T>(Reader reader)
         {
             return reader == null ? default : (T)reader.Decode(typeof(T));
         }
 
+        /// <summary>
+        /// 清除所有缓存的数据。
+        /// </summary>
         public static void Clear()
         {
             BsonObjects.Clear();
@@ -77,6 +114,7 @@ namespace BsonUtility
             {
                 return propertyMetaList1;
             }
+
             IList<PropertyMeta> propertyMetaList2 = new List<PropertyMeta>();
             foreach (PropertyInfo property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
@@ -666,6 +704,7 @@ namespace BsonUtility
                     {
                         return null;
                     }
+
                     byte[] destinationArray = new byte[_stream.Length];
                     Array.Copy(_stream.GetBuffer(), destinationArray, destinationArray.Length);
                     return destinationArray;
